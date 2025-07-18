@@ -1,17 +1,22 @@
 import pygame
-from Player import Player
-from World import World
+from Entities.Player import Player
+from World.Island import Island
+from Render.Hud import Hud
+from World.Tree import TreeManager
+from World.World import WorldManager
 
 WIDTH, HEIGHT = 800, 500
-DEVMODE = True  # Set to False for normal play
+DEVMODE = True
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Island Survival")
 
-player = Player(1920 * 2, 1080 * 2)  # Start somewhere in the world
-world = World()
-world.generate_trees(50)
+player = Player(1920 * 2, 1080 * 2)
+world = WorldManager(player, WIDTH, HEIGHT, minutes_per_day=5, fps=60)
+treeManager = TreeManager()
+island = Island(treeManager)
+hud = Hud()
 
 running = True
 clock = pygame.time.Clock()
@@ -21,6 +26,7 @@ time_of_day = 0.4 # Ranges from 0.0 to 1.0 (looping)
 desired_minutes_per_day = 5  # ⏱ 5 real minutes per full cycle
 fps = 60
 time_speed = 1 / (desired_minutes_per_day * 60 * fps)
+dt = 0
 
 overlay = pygame.Surface((WIDTH, HEIGHT))
 
@@ -31,14 +37,7 @@ while running:
 
     # --- Handle key input ---
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player.move_up(pygame.K_LSHIFT)
-    if keys[pygame.K_s]:
-        player.move_down(pygame.K_LSHIFT)
-    if keys[pygame.K_a]:
-        player.move_left(pygame.K_LSHIFT)
-    if keys[pygame.K_d]:
-        player.move_right(pygame.K_LSHIFT)
+    mousePos = pygame.mouse.get_pos()
 
     # --- Update time ---
     time_of_day += time_speed
@@ -54,24 +53,29 @@ while running:
     alpha = max(0, min(180, alpha))  # Clamp to safe range
 
     # --- Render world and player ---
-    cam_x, cam_y = player.get_camera_offset(WIDTH, HEIGHT)
+    camX, camY = player.get_camera_offset(WIDTH, HEIGHT)
     screen.fill((0, 0, 0))
-    world.render(screen, cam_x, cam_y)
-    mouse_pos = pygame.mouse.get_pos()
-    player.render(screen, (WIDTH // 2, HEIGHT // 2), mouse_pos)
+    island.render(screen, camX, camY)
+    player.update(screen, WIDTH, HEIGHT, mousePos, keys, dt, DEVMODE)
 
     # --- Draw day/night overlay ---
-    overlay.fill((0, 0, 0))
-    overlay.set_alpha(alpha)
+    world.update(dt)
+    overlay, alpha = world.get_overlay()
     screen.blit(overlay, (0, 0))
+
+
+
+    # --- Hud elements ---
+    trees = treeManager.get_trees()
+    hud.render(screen, player, trees, DEVMODE, world)
 
     # --- Debug info ---
     if DEVMODE:
-        hour = int(time_of_day * 24)
-        minute = int((time_of_day * 24 * 60) % 60)
-        print(f"Player pos: {player.get_pos()}, Time: {hour:02d}:{minute:02d}, Alpha: {alpha}")
+        hour, minute = world.get_time()
+        print(f"Player pos: {(round(player.get_pos()[0], 1), round(player.get_pos()[1], 1))}, Time: {hour:02d}:{minute:02d}, Alpha: {alpha}, TimeSinceMoved: {player.get_timeSinceMoved()}")
 
     pygame.display.flip()
     clock.tick(fps)
+    dt = clock.get_time() / 1000 
 
 pygame.quit()
