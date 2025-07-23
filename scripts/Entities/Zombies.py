@@ -1,6 +1,7 @@
 import pygame
 import time
 import math
+import random
 
 class Zombie:
     def __init__(self, x, y, hud):
@@ -18,6 +19,7 @@ class Zombie:
         self.attackCoolDown = 2
         self.TimeWhenAttacked = time.time()
         self.TimeSinceAttacked = 0
+        self.StopFollowingDistance = 50
         self.x = x
         self.y = y
         self.show_health_bar = False
@@ -26,6 +28,9 @@ class Zombie:
         self.PlayerHud = hud
         self.Angry = False
         self.Attack = False
+
+    def get_stop_following_distance(self):
+        return self.StopFollowingDistance
 
     def get_attack_reach(self):
         return self.AttackReach
@@ -45,7 +50,10 @@ class Zombie:
     def get_pos(self):
         return [self.x, self.y]
     
-    def die(self):
+    def die(self, world):
+        if random.randint(1, 2) == 1:
+            world.spawn_coin(self.x, self.y)
+
         self.IsAlive = False
 
     def distance_from_player(self, player):
@@ -55,14 +63,13 @@ class Zombie:
         return (dx ** 2 + dy ** 2) ** 0.5
 
 
-    def check_click(self, mouse_pos, cx, cy, dt, player):
+    def check_click(self, mouse_pos, cx, cy, player):
         rect = self.image.get_rect(center=(self.x - cx, self.y - cy))
         if rect.collidepoint(mouse_pos) and (self.distance_from_player(player) < player.get_melee_reach()):
-            self.PlayerHud.crosshair = pygame.transform.scale(self.PlayerHud.crosshair, (self.PlayerHud.BigCrosshairScale, self.PlayerHud.BigCrosshairScale))
+            player.EntityInCrosshair = True
+
             if player.is_melee_attacking():
                 self.hurt(player.get_melee_dmg())
-        else:
-            self.PlayerHud.crosshair = pygame.transform.scale(self.PlayerHud.crosshair, (self.PlayerHud.orignalCrosshairScale, self.PlayerHud.orignalCrosshairScale))
 
 
     def render(self, screen, cx, cy, player, angry):
@@ -112,8 +119,8 @@ class Zombie:
         dy = py - self.y
         distance = math.hypot(dx, dy)
 
-        if distance == 0:
-            return  # Prevent division by zero
+        if distance <= self.get_stop_following_distance():
+            return
 
         # Normalize direction vector
         dx /= distance
@@ -133,13 +140,7 @@ class Zombie:
         self.show_health_bar = True
         self.health_bar_timer = time.time()
 
-    def heal(self, amount: float) -> None:
-        self.health += amount
-
-        if self.health > 1.0:
-            self.health = 1.0
-
-    def update(self, screen, player, dt, cx, cy, mp):
+    def update(self, screen, player, dt, cx, cy, mp, world):
         if not self.is_alive():
             return
         
@@ -156,7 +157,7 @@ class Zombie:
                 self.attack(player)
 
         self.render(screen, cx, cy, player, self.is_angry())
-        self.check_click(mp, cx, cy, dt, player)
+        self.check_click(mp, cx, cy, player)
 
         if self.get_health() <= 0:
-            self.die()
+            self.die(world)

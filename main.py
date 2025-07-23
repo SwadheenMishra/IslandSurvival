@@ -2,13 +2,13 @@ import pygame
 from scripts.Entities.Player import Player
 from scripts.World.Island import Island
 from scripts.Render.Hud import Hud
-from scripts.World.Tree import TreeManager
 from scripts.World.World import WorldManager
-from scripts.Entities.Zombies import Zombie
+from scripts.Screens.TitleScreen import TitleScreen
 
 # --- Initial Setup ---
-WIDTH, HEIGHT = 960, 540
-DEVMODE = True
+WIDTH, HEIGHT = 1920, 1080
+# WIDTH, HEIGHT = 850, 540
+DEVMODE = False
 MouseButton1Down = False
 
 pygame.init()
@@ -17,12 +17,13 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("Island Survival")
 
+titleScreen = TitleScreen(screen)
+
 # --- World Setup ---
 hud = Hud()
 player = Player(1920 * 2, 1080 * 2)
 world = WorldManager(screen, hud, player, minutes_per_day=5, fps=60)
-trees = TreeManager(world)
-island = Island(trees)
+island = Island()
 
 
 
@@ -45,8 +46,29 @@ while running:
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             MouseButton1Down = True
+
+        if not titleScreen.MoveToNext and event.type == pygame.MOUSEBUTTONDOWN:
+            if titleScreen.play_rect.collidepoint(event.pos):
+                player.EntityInCrosshair = True
+                if MouseButton1Down:
+                    titleScreen.MoveToNext = True  # Start game
+            elif titleScreen.quit_rect.collidepoint(event.pos):
+                player.EntityInCrosshair = True
+                if MouseButton1Down:
+                    running = False  # Exit game
+
+
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             MouseButton1Down = False
+
+
+    if not titleScreen.MoveToNext:
+        titleScreen.render()
+        hud.render_crosshair(screen, player)
+        pygame.display.flip()
+        clock.tick(fps)
+        dt = clock.get_time() / 1000
+        continue
 
     # --- Input ---
     keys = pygame.key.get_pressed()
@@ -75,7 +97,7 @@ while running:
     screen.blit(overlay, (0, 0))
 
     # --- HUD ---
-    hud.render(screen, player, trees.get_trees(), DEVMODE, world)
+    hud.render(screen, player, world.Trees, DEVMODE, world)
 
     if DEVMODE:
         hour, minute = world.get_time()

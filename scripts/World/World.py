@@ -1,7 +1,10 @@
 import pygame
 import random
 from scripts.Entities.Zombies import Zombie
-
+from scripts.Entities.Tree import Tree
+from scripts.Items.Coin import Coin
+from scripts.Items.Logs import Logs
+from scripts.Entities.NPC import NPC
 # xmin = 750, ymin = 440; xmax = 6770, ymax = 3790
 
 class WorldManager:
@@ -20,14 +23,31 @@ class WorldManager:
         self.ZombieSpawnYmin, self.ZombieSpawnYmax = [[390, 1390], [2740, 3790]]
         self.WaterDmg = 5
         self.Zombies = []
+        self.Trees = []
+        self.Coins = []
+        self.Logs = []
+        self.Traders = []
+        self.Traders.append(NPC(1920 * 1.8, 1080 * 1.8))
+        self.generate_trees(self.TreeDensity)
         self.spawn_zombies(self.get_zombie_density())
 
+    def generate_trees(self, density: int):
+        for _ in range(density):
+            y = random.randint(930, 3270)
+            x = random.randint(1550, 6170)
+            self.Trees.append(Tree(x, y))
 
     def get_zombie_density(self):
         return self.ZombieDensity
 
     def get_tree_density(self):
         return self.TreeDensity
+
+    def spawn_coin(self, x, y):
+        self.Coins.append(Coin(x, y, self.screen))
+    
+    def spawn_logs(self, x, y):
+        self.Logs.append(Logs(x, y, self.screen))
 
     def update_time(self):
         self.time_of_day += self.time_speed
@@ -74,4 +94,16 @@ class WorldManager:
         self.player_out_of_bounds(self.localPlayer, dt)
 
         for zombie in self.Zombies:
-            zombie.update(screen, self.localPlayer, dt, camX, camY, mousePos)
+            zombie.update(screen, self.localPlayer, dt, camX, camY, mousePos, self)
+        
+        for tree in self.Trees:
+            tree.update(screen, self.localPlayer, camX, camY, mousePos, self)
+
+        for coin in self.Coins:
+            coin.update(camX, camY, self.localPlayer, self)
+        
+        for log in self.Logs:
+            log.update(camX, camY, self.localPlayer, self)
+
+        for trader in self.Traders:
+            trader.update(screen, self.localPlayer, camX, camY, mousePos)

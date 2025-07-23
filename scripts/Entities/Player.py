@@ -24,13 +24,18 @@ class Player:
         self.TimeWhenMoved = time.time()
         self.TimeSinceMoved = 0
         self.attackCoolDown = 1
-        self.TimeWhenAttacked = time.time()
+        self.TimeWhenAttacked = 0
         self.TimeSinceAttacked = 0
         self.IsAlive = True
         self.MeleeDmg = 0.3
         self.GunDmg = 0.5
+        self.StartingCoins = 0
+        self.StartingLogs = 0
+        self.Coins = self.StartingCoins
+        self.Logs = self.StartingLogs
         self.meleeReach = 130
         self.maleeAttacking = False
+        self.EntityInCrosshair = False
 
     def get_stamina_regen_time(self):
         return self.staminaRegenTime
@@ -71,7 +76,11 @@ class Player:
         angle = math.degrees(math.atan2(-dy, dx))
 
         # Use attack image if currently attacking
-        image_to_use = self.Axe3Image if MB1DOWN or self.TimeSinceAttacked < self.attackCoolDown else self.originalImage
+        if self.TimeSinceAttacked <= self.attackCoolDown:
+            image_to_use = self.Axe3Image 
+        else:
+            image_to_use = self.originalImage
+
         self.image = pygame.transform.rotate(image_to_use, angle + 90)
         rect = self.image.get_rect(center=screen_pos)
 
