@@ -68,7 +68,7 @@ class NPC:
         HealthStr = "+10 Health"
         HealthTxt = self.PlayerHud.font.render(HealthStr, True, (0, 0, 0))
         screen.blit(HealthTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30 + 80))
-        HealthPrice = 30
+        HealthPrice = 15
         HealthPriceStr = f"Wood x{HealthPrice}"
         HealthPriceTxt = self.PlayerHud.font.render(HealthPriceStr, True, (0, 0, 0))
         screen.blit(HealthPriceTxt, (550 + TradingMenuMargin - 20, 260 + TradingMenuMargin + 30 + 80))
@@ -76,7 +76,7 @@ class NPC:
         PartStr = "Boat Part"
         PartTxt = self.PlayerHud.font.render(PartStr, True, (0, 0, 0))
         screen.blit(PartTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30 + 160))
-        PartPrice = 100
+        PartPrice = 10
         PartPriceStr = f"Coin x{PartPrice}"
         PartPriceTxt = self.PlayerHud.font.render(PartPriceStr, True, (0, 0, 0))
         screen.blit(PartPriceTxt, (550 + TradingMenuMargin - 30, 260 + TradingMenuMargin + 30 + 160))
