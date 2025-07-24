@@ -6,15 +6,13 @@ from scripts.World.World import WorldManager
 from scripts.Screens.TitleScreen import TitleScreen
 
 # --- Initial Setup ---
-WIDTH, HEIGHT = 1920, 1080
-# WIDTH, HEIGHT = 850, 540
 DEVMODE = False
 MouseButton1Down = False
 
 pygame.init()
 
 # Use FULLSCREEN at launch
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("Island Survival")
 
 titleScreen = TitleScreen(screen)
@@ -90,7 +88,7 @@ while running:
     camX, camY = player.get_camera_offset(screen)
     screen.fill((0, 0, 0))
     island.render(screen, camX, camY)
-    world.update(dt, screen, camX, camY, mousePos)
+    world.update(dt, screen, camX, camY, mousePos, MouseButton1Down)
     player.update(screen, mousePos, keys, dt, DEVMODE, MouseButton1Down)
 
     overlay, alpha = world.get_overlay()

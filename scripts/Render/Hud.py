@@ -84,7 +84,7 @@ class Hud:
 
         pygame.draw.rect(screen, (180, 200, 255), (x, y, self.health_bar_width, self.stamina_bar_height), 2, border_radius=4)
 
-    def render_minimap(self, screen, player, trees, zombies, logs, coins, DEVMODE):
+    def render_minimap(self, screen, player, trees, zombies, logs, coins, traders, boats, DEVMODE):
         world_x, world_y = player.get_pos()
         size = self.minimap_size
 
@@ -97,7 +97,7 @@ class Hud:
         scaled_x = int((world_x / WORLD_WIDTH) * size)
         scaled_y = int((world_y / WORLD_HEIGHT) * size)
 
-        if DEVMODE:
+        if player.HasBinoculars:
             for tree in trees:
                 if not tree.is_alive():
                     continue
@@ -123,6 +123,15 @@ class Hud:
                 x4, y4 = int((xc / WORLD_WIDTH) * size), int((yc / WORLD_HEIGHT) * size)
                 pygame.draw.circle(minimap, (255, 215, 0), (x4, y4), 3)
 
+            for boat in boats:
+                xb, yb = boat.get_pos()
+                x5, y5 = int((xb / WORLD_WIDTH) * size), int((yb / WORLD_HEIGHT) * size)
+                pygame.draw.circle(minimap, (128, 0, 128), (x5, y5), 6)
+
+        for trader in traders:
+            xt, yt = trader.get_pos()
+            x6, y6 = int((xt / WORLD_WIDTH) * size), int((yt / WORLD_HEIGHT) * size)
+            pygame.draw.circle(minimap, (0, 0, 255), (x6, y6), 3)
 
         pygame.draw.circle(minimap, (255, 255, 255), (scaled_x, scaled_y), 3)
         pygame.draw.rect(minimap, (255, 255, 255), (0, 0, size, size), 2)
@@ -142,6 +151,7 @@ class Hud:
         CoinTxt = self.ResourceFont.render(CoinStr, True, (255, 255, 255))
 
         total_width = LogsTxt.get_width()
+
         y = 20
         x = (screen.get_width() - total_width) // 2
 
@@ -169,6 +179,20 @@ class Hud:
         # Blit both texts
         screen.blit(text1, (x, y))
         screen.blit(text2, (x + text1.get_width(), y))
+    
+    def render_win_screen(self, screen):
+        # Create both parts of the text
+        text1 = self.DeathFont.render("You ", True, (0, 255, 0))  # Green
+        text2 = self.DeathFont.render("escaped!", True, (0, 0, 255))      # Blue
+
+        # Combine widths
+        total_width = text1.get_width() + text2.get_width()
+        y = screen.get_height() // 2
+        x = (screen.get_width() - total_width) // 2
+
+        # Blit both texts
+        screen.blit(text1, (x, y))
+        screen.blit(text2, (x + text1.get_width(), y))
 
 
     def render(self, screen, player, trees, DEVMODE, world=None):
@@ -176,10 +200,15 @@ class Hud:
             pygame.mouse.set_visible(True)
             self.render_death_screen(screen)
             return
+        
+        if player.Won:
+            pygame.mouse.set_visible(True)
+            self.render_win_screen(screen)
+            return
 
         self.render_health_bar(screen, player)
         self.render_crosshair(screen, player)
-        self.render_minimap(screen, player, trees, world.Zombies, world.Logs, world.Coins, DEVMODE)
+        self.render_minimap(screen, player, trees, world.Zombies, world.Logs, world.Coins, world.Traders, world.Boats, DEVMODE)
         self.render_stamina_bar(screen, 20, 20 + self.health_bar_height + self.bar_spacing, player)
         self.render_time(screen, world)
         self.render_coordinates(screen, player)

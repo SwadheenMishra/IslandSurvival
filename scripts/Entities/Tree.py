@@ -28,7 +28,7 @@ class Tree:
         return [self.x, self.y]
 
     def die(self, world):
-        for i in range(random.randint(0, 3)):
+        for i in range(random.randint(0, 4)):
             XRand, YRand = random.randint(-30, 30), random.randint(-30, 30) 
             world.spawn_logs(self.x + XRand, self.y + YRand)
 
