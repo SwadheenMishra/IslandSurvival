@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Survival Island - README</title>
   <style>
     body {
       font-family: Arial, sans-serif;
