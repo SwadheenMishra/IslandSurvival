@@ -38,7 +38,7 @@
   <ol>
     <li><strong>Clone or download</strong> this repository.</li>
     <li>Make sure you have <strong>Python 3</strong> installed.</li>
-    <li>Install dependencies if required (typically <code>pygame</code> or <code>pyglet</code>).</li>
+    <li>Install dependencies if required (<code>pygame</code>).</li>
     <li>Open a terminal in the game folder.</li>
     <li>Run:</li>
   </ol>
