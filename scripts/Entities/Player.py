@@ -16,6 +16,8 @@ class Player:
         self.Axe3Image = pygame.transform.scale(self.Axe3Image, (self.sprite_scale, self.sprite_scale))
         self.GunImage = pygame.image.load("assets/Entities/Player/Gun/PlayerGun2.png").convert_alpha()
         self.GunImage = pygame.transform.scale(self.GunImage, (self.sprite_scale, self.sprite_scale))
+        self.GunCoolDownImage = pygame.image.load("assets/Entities/Player/Gun/PlayerGun1.png").convert_alpha()
+        self.GunCoolDownImage = pygame.transform.scale(self.GunCoolDownImage, (self.sprite_scale, self.sprite_scale))
         self.image = self.originalImage
         self.worldX = x
         self.worldY = y
@@ -123,7 +125,10 @@ class Player:
                 else:
                     image_to_use = self.originalImage
             elif self.is_holding_gun():
-                image_to_use = self.GunImage
+                if self.TimeSinceAttacked <= self.attackCoolDown:
+                    image_to_use = self.GunCoolDownImage
+                else:
+                    image_to_use = self.GunImage
 
             self.image = pygame.transform.rotate(image_to_use, angle + 90)
             self.rect = self.image.get_rect(center=screen_pos)
