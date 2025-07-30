@@ -20,6 +20,7 @@ class NPC:
         self.BinocularsColor = (200, 255, 255)
         self.HealthColor = (200, 255, 255)
         self.PartColor = (200, 255, 255)
+        self.GunColor = (200, 255, 255)
         self.current = Trades.NONE
         self.x = x
         self.y = y
@@ -33,7 +34,7 @@ class NPC:
         dy = py - self.y
         return (dx ** 2 + dy ** 2) ** 0.5
     
-    def render_trade_options(self, screen, TradingMenuMargin, BinocularsPrice, HealthPrice, PartPrice):
+    def render_trade_options(self, screen, TradingMenuMargin, BinocularsPrice, HealthPrice, GunPrice, PartPrice):
         BinocularsStr = "Binoculars"
         BinocularsTxt = self.PlayerHud.font.render(BinocularsStr, True, (0, 0, 0))
         screen.blit(BinocularsTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30))
@@ -50,13 +51,21 @@ class NPC:
         HealthPriceTxt = self.PlayerHud.font.render(HealthPriceStr, True, (0, 0, 0))
         screen.blit(HealthPriceTxt, (550 + TradingMenuMargin - 20, 260 + TradingMenuMargin + 30 + 80))
 
+        GunStr = "Boat Part"
+        GunTxt = self.PlayerHud.font.render(GunStr, True, (0, 0, 0))
+        screen.blit(GunTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30 + 160 + 80))
+        
+        GunPriceStr = f"Coin x{GunPrice}"
+        GunPriceTxt = self.PlayerHud.font.render(GunPriceStr, True, (0, 0, 0))
+        screen.blit(GunPriceTxt, (550 + TradingMenuMargin - 30, 260 + TradingMenuMargin + 30 + 160 + 80))  
+
         PartStr = "Boat Part"
         PartTxt = self.PlayerHud.font.render(PartStr, True, (0, 0, 0))
-        screen.blit(PartTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30 + 160))
+        screen.blit(PartTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30 + 160 + 80))
         
         PartPriceStr = f"Coin x{PartPrice}"
         PartPriceTxt = self.PlayerHud.font.render(PartPriceStr, True, (0, 0, 0))
-        screen.blit(PartPriceTxt, (550 + TradingMenuMargin - 30, 260 + TradingMenuMargin + 30 + 160))    
+        screen.blit(PartPriceTxt, (550 + TradingMenuMargin - 30, 260 + TradingMenuMargin + 30 + 160 + 80))    
 
     def get_selected_trade(self, mx, my, TradingMenuMargin, player, MB1DOWN):
         if (mx <= 150 + TradingMenuMargin + 70) and (mx >= 150 + TradingMenuMargin) and (my >= 200 + TradingMenuMargin) and (my <= 200 + TradingMenuMargin + 40):
@@ -70,6 +79,7 @@ class NPC:
             if MB1DOWN:
                 self.BinocularsColor = (100, 255, 255)
                 self.HealthColor = (200, 255, 255)
+                self.GunColor = (200, 255, 255)
                 self.PartColor = (200, 255, 255)
                 self.current = Trades.BINOCULARS
             
@@ -78,6 +88,7 @@ class NPC:
             if MB1DOWN:
                 self.BinocularsColor = (200, 255, 255)
                 self.HealthColor = (100, 255, 255)
+                self.GunColor = (200, 255, 255)
                 self.PartColor = (200, 255, 255)
                 self.current = Trades.HEALTH
             
@@ -86,6 +97,15 @@ class NPC:
             if MB1DOWN:
                 self.BinocularsColor = (200, 255, 255)
                 self.HealthColor = (200, 255, 255)
+                self.GunColor = (100, 255, 255)
+                self.PartColor = (200, 255, 255)
+                self.current = Trades.GUN
+            player.EntityInCrosshair = True
+        elif (mx <= 150 + TradingMenuMargin + 480) and (mx >= 150 + TradingMenuMargin) and (my >= 260 + TradingMenuMargin + 5) and (my <= 500 + TradingMenuMargin + 5 + 70):
+            if MB1DOWN:
+                self.BinocularsColor = (200, 255, 255)
+                self.HealthColor = (200, 255, 255)
+                self.GunColor = (200, 255, 255)
                 self.PartColor = (100, 255, 255)
                 self.current = Trades.BOATPART
             
@@ -126,7 +146,7 @@ class NPC:
         PayStr = "You pay"
         PayTxt = self.PlayerHud.font.render(PayStr, True, (0, 0, 0))
 
-        pygame.draw.rect(screen, (155, 255, 255), (150 , 200, 500, 400 - 70)) 
+        pygame.draw.rect(screen, (155, 255, 255), (150 , 200, 500, 400 + 80 - 70)) 
 
         pygame.draw.rect(screen, (255, 0, 0), (150 + TradingMenuMargin, 200 + TradingMenuMargin, 70, 40))
         screen.blit(ExitBtnTxt, (150 + TradingMenuMargin + 9, 200 + TradingMenuMargin + 12))
@@ -140,21 +160,23 @@ class NPC:
 
         pygame.draw.rect(screen, self.BinocularsColor, (150 + TradingMenuMargin, 260 + TradingMenuMargin + 5, 480, 70))
         pygame.draw.rect(screen, self.HealthColor, (150 + TradingMenuMargin, 340 + TradingMenuMargin + 5, 480, 70))
-        pygame.draw.rect(screen, self.PartColor, (150 + TradingMenuMargin, 420 + TradingMenuMargin + 5, 480, 70))
+        pygame.draw.rect(screen, self.GunColor, (150 + TradingMenuMargin, 420 + TradingMenuMargin + 5, 480, 70))
+        pygame.draw.rect(screen, self.PartColor, (150 + TradingMenuMargin, 500 + TradingMenuMargin + 5, 480, 70))
 
     def Open_Trade_Menu(self, screen, mousePos, player, MB1DOWN):
         TradingMenuMargin = 10
 
         BinocularsPrice = 10
         HealthPrice = 15
+        GunPrice = 5
         PartPrice = 10
 
         mx, my = mousePos
 
         self.render_trade_ui(TradingMenuMargin, screen)
-        self.render_trade_options(screen, TradingMenuMargin, BinocularsPrice, HealthPrice, PartPrice)
+        self.render_trade_options(screen, TradingMenuMargin, BinocularsPrice, HealthPrice, GunPrice, PartPrice)
         self.get_selected_trade(mx, my, TradingMenuMargin, player, MB1DOWN)
-        self.make_trade(mx, my, TradingMenuMargin, player, MB1DOWN, self.current, BinocularsPrice, HealthPrice, PartPrice)
+        self.make_trade(mx, my, TradingMenuMargin, player, MB1DOWN, self.current, BinocularsPrice, HealthPrice, GunPrice, PartPrice)
     
     def check_click(self, mouse_pos, cx, cy, player):
         rect = self.image.get_rect(center=(self.x - cx, self.y - cy))

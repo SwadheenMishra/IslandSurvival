@@ -49,7 +49,7 @@ class Player:
         self.HasPart = False
         self.HasGun = False
         self.Won = False
-        self.HeldItem = PlayerHandItem.GUN
+        self.HeldItem = PlayerHandItem.AXE
 
     def get_stamina_regen_time(self):
         return self.staminaRegenTime
@@ -218,6 +218,12 @@ class Player:
         if self.TimeSinceMoved >= self.get_stamina_regen_time():
             self.change_stamina(0.07, dt)
 
+    def handel_held_item(self):
+        if self.is_holding_axe():
+            self.HeldItem = PlayerHandItem.AXE
+        elif self.is_holding_gun():
+            self.HeldItem = PlayerHandItem.GUN
+
     def update(self, screen, mousePos, keys, dt, DEVMODE, MB1DOWN):
         if not self.is_alive():
             return
@@ -250,3 +256,5 @@ class Player:
         elif keys[pygame.K_DOWN] and DEVMODE:
             self.maxHealth -= 0.1 * dt
             self.health = self.get_max_health()
+        
+        self.handel_held_item()
