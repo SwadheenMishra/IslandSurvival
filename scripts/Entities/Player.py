@@ -14,8 +14,8 @@ class Player:
         self.originalImage = pygame.transform.scale(self.originalImage, (self.sprite_scale, self.sprite_scale))
         self.Axe3Image = pygame.image.load("assets/Entities/Player/Axe/PlayerAxe3.png").convert_alpha()
         self.Axe3Image = pygame.transform.scale(self.Axe3Image, (self.sprite_scale, self.sprite_scale))
-        self.GunImage = pygame.image.load("assets/Entities/Player/Gun/PlayerGun1.png").convert_alpha()
-        self.GunImage = pygame.transform.scale(self.Axe3Image, (self.sprite_scale, self.sprite_scale))
+        self.GunImage = pygame.image.load("assets/Entities/Player/Gun/PlayerGun2.png").convert_alpha()
+        self.GunImage = pygame.transform.scale(self.GunImage, (self.sprite_scale, self.sprite_scale))
         self.image = self.originalImage
         self.worldX = x
         self.worldY = y
@@ -48,7 +48,7 @@ class Player:
         self.HasPart = False
         self.HasGun = False
         self.Won = False
-        self.HeldItem = PlayerHandItem.AXE
+        self.HeldItem = PlayerHandItem.GUN
 
     def get_stamina_regen_time(self):
         return self.staminaRegenTime
@@ -96,11 +96,13 @@ class Player:
             dy = mouse_pos[1] - screen_pos[1]
             angle = math.degrees(math.atan2(-dy, dx))
 
-            # Use attack image if currently attacking
-            if self.TimeSinceAttacked <= self.attackCoolDown:
-                image_to_use = self.Axe3Image 
-            else:
-                image_to_use = self.originalImage
+            if self.HeldItem == PlayerHandItem.AXE:
+                if self.TimeSinceAttacked <= self.attackCoolDown:
+                    image_to_use = self.Axe3Image 
+                else:
+                    image_to_use = self.originalImage
+            elif self.HeldItem == PlayerHandItem.GUN:
+                image_to_use = self.GunImage
 
             self.image = pygame.transform.rotate(image_to_use, angle + 90)
             self.rect = self.image.get_rect(center=screen_pos)
