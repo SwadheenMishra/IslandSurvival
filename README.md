@@ -11,7 +11,7 @@
   <p><strong>Survival Island</strong> is a simple yet mysterious island survival game made in Python where your only goal is to <strong>escape</strong>... somehow. The game doesn't hold your hand. It drops you on an island, and what happens next is up to <strong>you</strong>.</p>
 
   <blockquote>
-    <p>"It’s just you, the island, and the unknown. Can you find your way out before night falls?"</p>
+    <p>"It’s just you, the island, and the unknown. Can you find your way out?"</p>
   </blockquote>
 
   <h2>🎮 Play Now</h2>
