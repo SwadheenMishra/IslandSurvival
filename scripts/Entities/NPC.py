@@ -1,5 +1,12 @@
 import pygame
 import time
+from enum import Enum
+
+class Trades(Enum):
+    BINOCULARS = 0,
+    HEALTH = 1,
+    GUN = 2
+    BOATPART = 3
 
 class NPC:
     def __init__(self, x, y, hud):
@@ -24,9 +31,67 @@ class NPC:
         dx = px - self.x
         dy = py - self.y
         return (dx ** 2 + dy ** 2) ** 0.5
+    
+    def render_trade_options(self, screen, TradingMenuMargin, BinocularsPrice, HealthPrice, PartPrice):
+        BinocularsStr = "Binoculars"
+        BinocularsTxt = self.PlayerHud.font.render(BinocularsStr, True, (0, 0, 0))
+        screen.blit(BinocularsTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30))
+        
+        BinocularsPriceStr = f"Wood x{BinocularsPrice}"
+        BinocularsPriceTxt = self.PlayerHud.font.render(BinocularsPriceStr, True, (0, 0, 0))
+        screen.blit(BinocularsPriceTxt, (550 + TradingMenuMargin - 20, 260 + TradingMenuMargin + 30))
+
+        HealthStr = "+10 Health"
+        HealthTxt = self.PlayerHud.font.render(HealthStr, True, (0, 0, 0))
+        screen.blit(HealthTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30 + 80))
+       
+        HealthPriceStr = f"Wood x{HealthPrice}"
+        HealthPriceTxt = self.PlayerHud.font.render(HealthPriceStr, True, (0, 0, 0))
+        screen.blit(HealthPriceTxt, (550 + TradingMenuMargin - 20, 260 + TradingMenuMargin + 30 + 80))
+
+        PartStr = "Boat Part"
+        PartTxt = self.PlayerHud.font.render(PartStr, True, (0, 0, 0))
+        screen.blit(PartTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30 + 160))
+        
+        PartPriceStr = f"Coin x{PartPrice}"
+        PartPriceTxt = self.PlayerHud.font.render(PartPriceStr, True, (0, 0, 0))
+        screen.blit(PartPriceTxt, (550 + TradingMenuMargin - 30, 260 + TradingMenuMargin + 30 + 160))    
+
+    def get_selected_trade(self, mx, my, TradingMenuMargin, player, MB1DOWN):
+        if (mx <= 150 + TradingMenuMargin + 70) and (mx >= 150 + TradingMenuMargin) and (my >= 200 + TradingMenuMargin) and (my <= 200 + TradingMenuMargin + 40):
+            player.EntityInCrosshair = True
+
+            if MB1DOWN:
+                player.IsTrading = False
+                self.OpenTradeMenu = False
+        elif (mx <= 150 + TradingMenuMargin + 480) and (mx >= 150 + TradingMenuMargin) and (my >= 260 + TradingMenuMargin + 5) and (my <= 260 + TradingMenuMargin + 5 + 70):
+            if MB1DOWN:
+                self.BinocularsColor = (100, 255, 255)
+                self.HealthColor = (200, 255, 255)
+                self.PartColor = (200, 255, 255)
+                return Trades.BINOCULARS
+            player.EntityInCrosshair = True
+        elif (mx <= 150 + TradingMenuMargin + 480) and (mx >= 150 + TradingMenuMargin) and (my >= 260 + TradingMenuMargin + 5) and (my <= 340 + TradingMenuMargin + 5 + 70):
+            if MB1DOWN:
+                self.BinocularsColor = (200, 255, 255)
+                self.HealthColor = (100, 255, 255)
+                self.PartColor = (200, 255, 255)
+                return Trades.HEALTH
+            player.EntityInCrosshair = True
+        elif (mx <= 150 + TradingMenuMargin + 480) and (mx >= 150 + TradingMenuMargin) and (my >= 260 + TradingMenuMargin + 5) and (my <= 420 + TradingMenuMargin + 5 + 70):
+            if MB1DOWN:
+                self.BinocularsColor = (200, 255, 255)
+                self.HealthColor = (200, 255, 255)
+                self.PartColor = (100, 255, 255)
+                return Trades.BOATPART
+            player.EntityInCrosshair = True    
 
     def Open_Trade_Menu(self, screen, mousePos, player, MB1DOWN):
         TradingMenuMargin = 10
+
+        BinocularsPrice = {"matirial": player.logs, "price": 10}
+        HealthPrice = {"matirial": player.logs, "price": 15}
+        PartPrice = {"matirial": player.Coins, "price": 10}
 
         TradeBtnStr = "Trade!"
         TradeBtnTxt = self.PlayerHud.font.render(TradeBtnStr, True, (255, 255, 255))
@@ -55,40 +120,9 @@ class NPC:
         pygame.draw.rect(screen, self.BinocularsColor, (150 + TradingMenuMargin, 260 + TradingMenuMargin + 5, 480, 70))
         pygame.draw.rect(screen, self.HealthColor, (150 + TradingMenuMargin, 340 + TradingMenuMargin + 5, 480, 70))
         pygame.draw.rect(screen, self.PartColor, (150 + TradingMenuMargin, 420 + TradingMenuMargin + 5, 480, 70))
-        #pygame.draw.rect(screen, (200, 255, 255), (150 + TradingMenuMargin, 500 + TradingMenuMargin + 5, 480, 70))
-
-        BinocularsStr = "Binoculars"
-        BinocularsTxt = self.PlayerHud.font.render(BinocularsStr, True, (0, 0, 0))
-        screen.blit(BinocularsTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30))
-        BinocularsPrice = 10
-        BinocularsPriceStr = f"Wood x{BinocularsPrice}"
-        BinocularsPriceTxt = self.PlayerHud.font.render(BinocularsPriceStr, True, (0, 0, 0))
-        screen.blit(BinocularsPriceTxt, (550 + TradingMenuMargin - 20, 260 + TradingMenuMargin + 30))
-
-        HealthStr = "+10 Health"
-        HealthTxt = self.PlayerHud.font.render(HealthStr, True, (0, 0, 0))
-        screen.blit(HealthTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30 + 80))
-        HealthPrice = 15
-        HealthPriceStr = f"Wood x{HealthPrice}"
-        HealthPriceTxt = self.PlayerHud.font.render(HealthPriceStr, True, (0, 0, 0))
-        screen.blit(HealthPriceTxt, (550 + TradingMenuMargin - 20, 260 + TradingMenuMargin + 30 + 80))
-
-        PartStr = "Boat Part"
-        PartTxt = self.PlayerHud.font.render(PartStr, True, (0, 0, 0))
-        screen.blit(PartTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30 + 160))
-        PartPrice = 10
-        PartPriceStr = f"Coin x{PartPrice}"
-        PartPriceTxt = self.PlayerHud.font.render(PartPriceStr, True, (0, 0, 0))
-        screen.blit(PartPriceTxt, (550 + TradingMenuMargin - 30, 260 + TradingMenuMargin + 30 + 160))
 
         mx, my = mousePos
-
-        if (mx <= 150 + TradingMenuMargin + 70) and (mx >= 150 + TradingMenuMargin) and (my >= 200 + TradingMenuMargin) and (my <= 200 + TradingMenuMargin + 40):
-            player.EntityInCrosshair = True
-
-            if MB1DOWN:
-                player.IsTrading = False
-                self.OpenTradeMenu = False
+        if 1: pass
         elif (mx <= 550 + TradingMenuMargin + 77) and (mx >= 550 + TradingMenuMargin) and (my >= 200 + TradingMenuMargin) and (my <= 200 + TradingMenuMargin + 40):
             player.EntityInCrosshair = True
 
@@ -109,28 +143,6 @@ class NPC:
                             player.HasPart = True
                     case _:
                         pass
-
-        elif (mx <= 150 + TradingMenuMargin + 480) and (mx >= 150 + TradingMenuMargin) and (my >= 260 + TradingMenuMargin + 5) and (my <= 260 + TradingMenuMargin + 5 + 70):
-            if MB1DOWN:
-                self.BinocularsColor = (100, 255, 255)
-                self.HealthColor = (200, 255, 255)
-                self.PartColor = (200, 255, 255)
-                self.current = "b"
-            player.EntityInCrosshair = True
-        elif (mx <= 150 + TradingMenuMargin + 480) and (mx >= 150 + TradingMenuMargin) and (my >= 260 + TradingMenuMargin + 5) and (my <= 340 + TradingMenuMargin + 5 + 70):
-            if MB1DOWN:
-                self.BinocularsColor = (200, 255, 255)
-                self.HealthColor = (100, 255, 255)
-                self.PartColor = (200, 255, 255)
-                self.current = "h"
-            player.EntityInCrosshair = True
-        elif (mx <= 150 + TradingMenuMargin + 480) and (mx >= 150 + TradingMenuMargin) and (my >= 260 + TradingMenuMargin + 5) and (my <= 420 + TradingMenuMargin + 5 + 70):
-            if MB1DOWN:
-                self.BinocularsColor = (200, 255, 255)
-                self.HealthColor = (200, 255, 255)
-                self.PartColor = (100, 255, 255)
-                self.current = "p"
-            player.EntityInCrosshair = True
     
     def check_click(self, mouse_pos, cx, cy, player):
         rect = self.image.get_rect(center=(self.x - cx, self.y - cy))
