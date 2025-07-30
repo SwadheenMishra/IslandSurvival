@@ -1,6 +1,11 @@
 import pygame
 import time
 import math
+from enum import Enum
+
+class PlayerHandItem(Enum):
+    AXE = 0,
+    GUN = 1
 
 class Player:
     def __init__(self, x, y):
@@ -9,6 +14,8 @@ class Player:
         self.originalImage = pygame.transform.scale(self.originalImage, (self.sprite_scale, self.sprite_scale))
         self.Axe3Image = pygame.image.load("assets/Entities/Player/Axe/PlayerAxe3.png").convert_alpha()
         self.Axe3Image = pygame.transform.scale(self.Axe3Image, (self.sprite_scale, self.sprite_scale))
+        self.GunImage = pygame.image.load("assets/Entities/Player/Gun/PlayerGun1.png").convert_alpha()
+        self.GunImage = pygame.transform.scale(self.Axe3Image, (self.sprite_scale, self.sprite_scale))
         self.image = self.originalImage
         self.worldX = x
         self.worldY = y
@@ -41,6 +48,7 @@ class Player:
         self.HasPart = False
         self.HasGun = False
         self.Won = False
+        self.HeldItem = PlayerHandItem.AXE
 
     def get_stamina_regen_time(self):
         return self.staminaRegenTime
@@ -74,6 +82,9 @@ class Player:
 
     def get_timeSinceMoved(self) -> float:
         return self.TimeSinceMoved
+    
+    def switch_hand_item(self, item: PlayerHandItem) -> None:
+        self.HeldItem = item
 
     def die(self):
         self.IsAlive = False
