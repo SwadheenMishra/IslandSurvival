@@ -6,7 +6,7 @@ from scripts.Entities.NPC import NPC
 from scripts.Entities.Boat import Boat
 from scripts.Items.Coin import Coin
 from scripts.Items.Logs import Logs
-# xmin = 750, ymin = 440; xmax = 6770, ymax = 3790
+import threading
 
 class WorldManager:
     def __init__(self, screen, hud, player, minutes_per_day=5, fps=60):
@@ -130,8 +130,9 @@ class WorldManager:
         self.update_time()
         self.player_out_of_bounds(self.localPlayer, dt)
 
-        self.spawn_zombies()
-        self.spawn_trees()
+        
+        self.spawn_zombies() 
+        self.spawn_trees() 
 
         for zombie in self.Zombies:
             zombie.update(screen, self.localPlayer, dt, camX, camY, mousePos, self)
