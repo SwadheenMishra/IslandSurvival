@@ -90,7 +90,7 @@ class WorldManager:
 
             CurrentCount += 1
         
-        if CurrentCount >= self.get_zombie_density():
+        if CurrentCount >= self.get_tree_density():
             return
         
         SpawnCount = self.TreeDensity - CurrentCount

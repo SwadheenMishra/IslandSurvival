@@ -5,6 +5,7 @@ from scripts.Render.Hud import Hud
 from scripts.World.World import WorldManager
 from scripts.Screens.TitleScreen import TitleScreen
 
+
 # --- Initial Setup ---
 DEVMODE = False
 MouseButton1Down = False

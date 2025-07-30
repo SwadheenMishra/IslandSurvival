@@ -39,6 +39,7 @@ class Player:
         self.IsTrading = False
         self.HasBinoculars = False
         self.HasPart = False
+        self.HasGun = False
         self.Won = False
 
     def get_stamina_regen_time(self):
@@ -55,6 +56,9 @@ class Player:
 
     def get_melee_dmg(self) -> float:
         return self.MeleeDmg
+    
+    def get_gun_dmg(self) -> float:
+        return self.GunDmg
 
     def is_alive(self) -> bool:
         return self.IsAlive
