@@ -41,6 +41,7 @@ class Player:
         self.Coins = self.StartingCoins
         self.Logs = self.StartingLogs
         self.meleeReach = 130
+        self.gunReach = 1300
         self.maleeAttacking = False
         self.EntityInCrosshair = False
         self.IsTrading = False
@@ -52,10 +53,22 @@ class Player:
 
     def get_stamina_regen_time(self):
         return self.staminaRegenTime
+    
+    def is_holding_gun(self) -> bool:
+        return self.HeldItem == PlayerHandItem.GUN
+    
+    def is_holding_axe(self) -> bool:
+        return self.HeldItem == PlayerHandItem.AXE
+
+    def get_reach(self):
+        if self.is_holding_gun():
+            return self.gunReach
+        
+        return self.meleeReach
 
     def get_melee_reach(self):
         return self.meleeReach
-
+    
     def get_max_health(self):
         return self.maxHealth
 
@@ -96,12 +109,12 @@ class Player:
             dy = mouse_pos[1] - screen_pos[1]
             angle = math.degrees(math.atan2(-dy, dx))
 
-            if self.HeldItem == PlayerHandItem.AXE:
+            if self.is_holding_axe():
                 if self.TimeSinceAttacked <= self.attackCoolDown:
                     image_to_use = self.Axe3Image 
                 else:
                     image_to_use = self.originalImage
-            elif self.HeldItem == PlayerHandItem.GUN:
+            elif self.is_holding_gun():
                 image_to_use = self.GunImage
 
             self.image = pygame.transform.rotate(image_to_use, angle + 90)

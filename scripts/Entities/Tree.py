@@ -42,7 +42,7 @@ class Tree:
 
     def check_click(self, mouse_pos, cx, cy, player):
         rect = self.image.get_rect(center=(self.x - cx, self.y - cy))
-        if rect.collidepoint(mouse_pos) and (self.distance_from_player(player) < player.get_melee_reach()):
+        if rect.collidepoint(mouse_pos) and (self.distance_from_player(player) < player.get_reach()):
             player.EntityInCrosshair = True
 
             if player.is_melee_attacking():
