@@ -69,7 +69,7 @@ class Zombie:
             player.EntityInCrosshair = True
 
             if player.is_melee_attacking():
-                self.hurt(player.get_melee_dmg())
+                self.hurt(player.get_dmg())
 
 
     def render(self, screen, cx, cy, player, angry):

@@ -46,7 +46,7 @@ class Tree:
             player.EntityInCrosshair = True
 
             if player.is_melee_attacking():
-                self.hurt(player.get_melee_dmg())
+                self.hurt(player.get_dmg())
 
     def render(self, screen, cx, cy):
         rect = self.image.get_rect(center=(self.x - cx, self.y - cy))

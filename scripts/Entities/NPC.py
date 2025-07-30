@@ -51,13 +51,13 @@ class NPC:
         HealthPriceTxt = self.PlayerHud.font.render(HealthPriceStr, True, (0, 0, 0))
         screen.blit(HealthPriceTxt, (550 + TradingMenuMargin - 20, 260 + TradingMenuMargin + 30 + 80))
 
-        GunStr = "Boat Part"
+        GunStr = "Gun"
         GunTxt = self.PlayerHud.font.render(GunStr, True, (0, 0, 0))
-        screen.blit(GunTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30 + 160 + 80))
+        screen.blit(GunTxt, (150 + TradingMenuMargin + 15, 260 + TradingMenuMargin + 30 + 160))
         
         GunPriceStr = f"Coin x{GunPrice}"
         GunPriceTxt = self.PlayerHud.font.render(GunPriceStr, True, (0, 0, 0))
-        screen.blit(GunPriceTxt, (550 + TradingMenuMargin - 30, 260 + TradingMenuMargin + 30 + 160 + 80))  
+        screen.blit(GunPriceTxt, (550 + TradingMenuMargin - 20, 260 + TradingMenuMargin + 30 + 160))  
 
         PartStr = "Boat Part"
         PartTxt = self.PlayerHud.font.render(PartStr, True, (0, 0, 0))
@@ -111,7 +111,7 @@ class NPC:
             
             player.EntityInCrosshair = True    
 
-    def make_trade(self, mx, my, TradingMenuMargin, player, MB1DOWN, current, BinocularsPrice, HealthPrice, PartPrice):
+    def make_trade(self, mx, my, TradingMenuMargin, player, MB1DOWN, current, BinocularsPrice, HealthPrice, GunPrice, PartPrice):
         if (mx <= 550 + TradingMenuMargin + 77) and (mx >= 550 + TradingMenuMargin) and (my >= 200 + TradingMenuMargin) and (my <= 200 + TradingMenuMargin + 40):
             player.EntityInCrosshair = True
 
@@ -126,6 +126,10 @@ class NPC:
                             player.Logs -= HealthPrice
                             player.heal(0.1)
                             time.sleep(0.1)
+                    case Trades.GUN:
+                        if (not player.HasGun) and (player.Coins >= GunPrice):
+                            player.Coins -= GunPrice
+                            player.HasGun = True
                     case Trades.BOATPART:
                         if (not player.HasPart) and (player.Coins >= PartPrice):
                             player.Coins -= PartPrice

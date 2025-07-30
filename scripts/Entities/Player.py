@@ -54,11 +54,17 @@ class Player:
     def get_stamina_regen_time(self):
         return self.staminaRegenTime
     
-    def is_holding_gun(self) -> bool:
-        return self.HeldItem == PlayerHandItem.GUN
-    
     def is_holding_axe(self) -> bool:
         return self.HeldItem == PlayerHandItem.AXE
+    
+    def is_holding_gun(self) -> bool:
+        return self.HeldItem == PlayerHandItem.GUN
+
+    def should_hold_gun(self) -> bool:
+        return self.HasGun
+    
+    def should_hold_axe(self) -> bool:
+        return not self.HasGun
 
     def get_reach(self):
         if self.is_holding_gun():
@@ -75,8 +81,10 @@ class Player:
     def is_melee_attacking(self):
         return self.maleeAttacking
 
-    def get_melee_dmg(self) -> float:
-        return self.MeleeDmg
+    def get_dmg(self) -> float:
+        if self.is_holding_axe():
+            return self.MeleeDmg
+        return self.GunDmg
     
     def get_gun_dmg(self) -> float:
         return self.GunDmg
@@ -219,10 +227,10 @@ class Player:
             self.change_stamina(0.07, dt)
 
     def handel_held_item(self):
-        if self.is_holding_axe():
-            self.HeldItem = PlayerHandItem.AXE
-        elif self.is_holding_gun():
-            self.HeldItem = PlayerHandItem.GUN
+        if self.should_hold_axe():
+            self.switch_hand_item(PlayerHandItem.AXE)
+        elif self.should_hold_gun():
+            self.switch_hand_item(PlayerHandItem.GUN)
 
     def update(self, screen, mousePos, keys, dt, DEVMODE, MB1DOWN):
         if not self.is_alive():
